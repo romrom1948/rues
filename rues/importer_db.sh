@@ -17,6 +17,10 @@ create table liens (id_voie integer, id_commune integer, lat integer, long integ
 .import "$2" communes
 .import "$3" voies
 .import "$4" liens
+create unique index communes_idx on communes (id);
+create unique index communes_nom_idx on communes (nom);
+create unique index voies_idx on voies(id);
+create unique index voies_nom_idx on voies (nom);
 
 EOS
 
