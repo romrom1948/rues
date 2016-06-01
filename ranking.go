@@ -43,7 +43,7 @@ func Ranking(r io.Reader) (e error) {
 				i, e := util.IsAt(record[2], m3[m2[record[2]]])
 				if e != nil { // by construction, record[2] should be somewhere
 							  // in the slice ; something is wrong if not
-					fmt.Println("rues: internal error");
+					fmt.Println("internal error");
 					return e
 				}				
 				// move the name according to the new # of occurences

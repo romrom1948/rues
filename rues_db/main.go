@@ -10,7 +10,7 @@ import (
 )
 
 var helpMessage = [...]string{
-	"Usage : rues <cmd> <file>",
+	"Usage : rues_db <cmd> <file>",
 	"Process bano file <file> according to <cmd>",
 	"",
 	"<cmd> must be one of:",
@@ -34,13 +34,13 @@ func run(cmd func(r io.Reader) (e error), path string) (e error) {
 	file, err := os.Open(path)
 
 	if err != nil {
-		fmt.Println("rues: can not open given input file")
+		fmt.Println("can not open given input file")
 		return err
 	}
 		
 	defer func () {
 		if err := file.Close(); err != nil {
-			fmt.Println("rues: error while closing input file")
+			fmt.Println("error while closing input file")
 		}
 	}()
 	
@@ -54,7 +54,7 @@ func main() {
 
 	if len(os.Args) == 1 {
 		printHelp()
-		abort("rues: no command given")
+		abort("no command given")
 	}
 
 	if os.Args[1] == "help" {
@@ -72,7 +72,7 @@ func main() {
 		case "ranking":
 			err = run(rues.Ranking, os.Args[2])
 		default:
-			abort("rues: invalid command")
+			abort("invalid command")
 	}
 
 	if err != nil {
