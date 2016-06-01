@@ -1,3 +1,7 @@
+// Copyright (C) 2016 romrom@tutanota.com
+// Use of this source code is governed by the GPLv3
+// license that can be found in the LICENSE file.
+
 package rues
 
 import (
@@ -11,7 +15,7 @@ import (
 )
 
 // create voies.csv, communes.csv and liens.csv
-// the structure of the CSV is defined above
+// the structure of the CSV is defined in util/db_format.go
 func DB(r io.Reader) (e error) {
 	data := csv.NewReader(r)
 	
@@ -86,7 +90,7 @@ func DB(r io.Reader) (e error) {
 			if v == nil { // create if necessary
 				vmap[record[2]] = &util.Voie{vid, record[2], 1}
 				vidx[record[2]] = vid
-				vid++ // update even if the link is created after
+				vid++ // update now, create the link after
 			} else {
 				v.Occurences++
 			}
@@ -97,7 +101,7 @@ func DB(r io.Reader) (e error) {
 				cidx[record[4]] = cid
 				cid++
 			} else {
-				c.Voies++ // update even if the link is created after
+				c.Voies++ // update now, create the link after
 			}
 			
 			liens = append(liens, &util.Lien{vidx[record[2]], cidx[record[4]], record[6], record[7]})			

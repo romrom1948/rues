@@ -1,3 +1,7 @@
+// Copyright (C) 2016 romrom@tutanota.com
+// Use of this source code is governed by the GPLv3
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -15,7 +19,7 @@ var helpMessage = [...]string{
 	"",
 	"<cmd> must be one of:",
 	"	help 		print this help message",
-	"	db 			create voies.scv, communes.scv and liens.scv",			
+	"	db			create voies.scv, communes.scv and liens.scv",			
 	"	ranking		print street names ranked by frequency",
 }
 

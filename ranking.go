@@ -1,3 +1,7 @@
+// Copyright (C) 2016 romrom@tutanota.com
+// Use of this source code is governed by the GPLv3
+// license that can be found in the LICENSE file.
+
 package rues
 
 import (
