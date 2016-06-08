@@ -10,12 +10,12 @@ API REST-like
 * agreger_bano.sh et importer_db.sh permettent de manipuler les fichiers
 générés  
 
-# Dépendances
+# Dépendances
 
 * go
 * sqlite3
 * [mattn sqlite3 go driver](https://github.com/mattn/go-sqlite3)
 
-# License
+# License
 
 GPLv3. Se reporter au fichier LICENSE.
