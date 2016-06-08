@@ -1,9 +1,14 @@
 # rues
-Outils de manipulation de la base de données libre Bano des voies en France.
 
-# Introduction
+Outils de manipulation de la base de données libre Bano des voies (rues,
+avenues, chemins, ...) de France.
 
-Outils simples, rapides et variés pour manipuler la [base de données Bano](https://openstreetmap.fr/bano).
+* rues_db manipule les fichiers .csv originaux et permet (notamment) de
+les passer sous un format importable dans un base SQL
+* rues_backend donne accès (en JSON) à la base SQL générée selon une 
+API REST-like
+* agreger_bano.sh et importer_db.sh permettent de manipuler les fichiers
+générés  
 
 # Dépendances
 

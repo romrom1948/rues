@@ -3,7 +3,7 @@
 # usage importer_db.sh base.db communes.csv voies.csv liens.csv
 
 if [ "$#" -ne 4 ]; then
-	echo "usage: db_import.sh base.db communes.csv voies.csv liens.csv"
+	echo "usage: importer_db.sh base.db communes.csv voies.csv liens.csv"
 	exit 1
 fi
 
