@@ -1,0 +1,72 @@
+// Copyright (C) 2016 romrom@tutanota.com
+// Use of this source code is governed by the GPLv3
+// license that can be found in the LICENSE file.
+
+package main
+
+import (
+	"os"
+	"strings"
+	"fmt"
+    "log"
+    "time"
+    "net/http"
+    "database/sql"
+    
+	"github.com/gorilla/mux"
+	_ "github.com/mattn/go-sqlite3"	
+	
+	"github.com/romrom1948/rues"
+)
+
+var helpMessage = []string{
+	"Usage: rues_backend <db> <port>",
+	"Start a JSON backend server for rues db <db>.",
+	"<port> is optional. The server will bind on it if supplied.",
+	"",
+}
+
+// custom handler type for DB management, headers setting and logging
+type handler func(w http.ResponseWriter, r *http.Request, db *sql.DB)
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("sqlite3", os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	
+	start := time.Now()
+	
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.WriteHeader(http.StatusOK)
+	
+	h(w, r, db)
+	
+	log.Printf("%s\t%s\t(%s)",
+		r.Method,
+		r.RequestURI,
+		time.Since(start),
+	)
+}
+
+func main() {
+	if len(os.Args) == 1 {
+		fmt.Println(strings.Join(helpMessage, "\n"))
+		fmt.Println("need an sqlite3 database path !")
+		os.Exit(-1)
+	}
+	
+	var port = ":8080" // default port
+	if len(os.Args) == 3 {
+		port = ":" + os.Args[2]
+	}
+	
+    router := mux.NewRouter().StrictSlash(true)
+	router.Handle("/communes", handler(rues.CommunesHandler))
+	router.Handle("/commune/{commune}", handler(rues.CommuneHandler))
+    router.Handle("/voies", handler(rues.VoiesHandler))
+	router.Handle("/voie/{voie}", handler(rues.VoieHandler))
+	
+	log.Printf("%s ", "Started");
+    log.Fatal(http.ListenAndServe(port, router))	
+}

@@ -9,11 +9,12 @@ import (
 )
 
 type Commune struct {
-	Id int
-	Nom string
-	Cp	string
-	Voies int
+	Id int		`json:"id"`
+	Nom string	`json:"nom"`	
+	Cp	string	`json:"cp"`
+	Voies int	`json:"voies"`
 }
+type Communes []Commune
 
 // for use with csv.Writer
 func (c Commune) Record() []string {
@@ -24,15 +25,17 @@ func (c Commune) Record() []string {
 }
 
 type Voie struct {
-	Id int
-	Nom string
-	Occurences int
+	Id int			`json:"id"`	
+	Nom string		`json:"nom"`
+	Occurences int	`json:"occurences"`
 }
+type Voies[]Voie
 
 // for use with csv.Writer
 func (v Voie) Record() []string {
 	r := make([]string, 3)
-	r[0] = strconv.Itoa(v.Id); r[1] = v.Nom; r[2] = strconv.Itoa(v.Occurences);
+	r[0] = strconv.Itoa(v.Id); r[1] = v.Nom; 
+	r[2] = strconv.Itoa(v.Occurences);
 	return r 
 }
 
