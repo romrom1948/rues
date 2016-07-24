@@ -23,7 +23,6 @@ var helpMessage = []string{
 	"Usage: rues_backend <db> <port>",
 	"Start a JSON backend server for rues db <db>.",
 	"<port> is optional. The server will bind on it if supplied.",
-	"",
 }
 
 // custom handler type for DB management, headers setting and logging

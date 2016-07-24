@@ -3,13 +3,13 @@
 Outils de manipulation de la base de données libre Bano des voies (rues,
 avenues, chemins, ...) de France.
 
-* rues_db manipule les fichiers .csv originaux et permet (notamment) de
-les convertir dans un format importable dans une base SQL
-* agreger_bano.sh et importer_db.sh permettent de manipuler les fichiers
-générés (compilation et importation dans une base)
-* rues_backend est un serveur de backend JSON selon une API rest-like à
-partir de la base données crée
-* rues_frontend est le frontend web correspondant au backend
+* agreger_bano.sh agrège en un seul fichier les fichiers par département
+* rues_extract extrait les informations de la base données CSV de départ
+dans un format importable sous sqlite
+* importer_db.sh importe ce qui a été extrait dans une base sqlite
+* rues_backend est un serveur de backend JSON qui vient se brancher sur
+la base sqlite extraite
+* enfin, rues_frontend est le frontend web correspondant au backend
 
 # Dépendances
 

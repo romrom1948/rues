@@ -18,7 +18,7 @@ import (
 )
 
 func VoiesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	rows, err := db.Query("SELECT id, nom, occurences FROM voies")
+	rows, err := db.Query(`SELECT id, nom, occurences FROM voies`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -120,7 +120,7 @@ func VoieLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	request := vars["request"]
 
 	// we use Sprintf to properly escape LIKE pattern
-	query := fmt.Sprintf("SELECT id, nom, occurences FROM voies WHERE nom LIKE '%%%s%%'", request)
+	query := fmt.Sprintf(`SELECT id, nom, occurences FROM voies WHERE nom LIKE '%%%s%%'`, request)
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)

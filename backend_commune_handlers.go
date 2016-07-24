@@ -18,7 +18,7 @@ import (
 )
 
 func CommunesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	rows, err := db.Query("SELECT id, nom, cp, voies FROM communes")
+	rows, err := db.Query(`SELECT id, nom, cp, voies FROM communes`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -119,7 +119,7 @@ func CommuneLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	request := vars["request"]
 	
 	// we use Sprintf to properly escape LIKE pattern
-	query := fmt.Sprintf("SELECT id, nom, cp, voies FROM communes WHERE nom LIKE '%%%s%%'", request)
+	query := fmt.Sprintf(`SELECT id, nom, cp, voies FROM communes WHERE nom LIKE '%%%s%%'`, request)
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)
