@@ -64,10 +64,17 @@ func main() {
 	}
 	
     router := mux.NewRouter().StrictSlash(true)
+	// routes are set below, not enough of them to warrant a specific file
+    
 	router.Handle("/communes", handler(rues.CommunesHandler))
-	router.Handle("/commune/{commune}", handler(rues.CommuneHandler))
+	router.Handle("/commune/name/{commune}", handler(rues.CommuneNameHandler))
+	router.Handle("/commune/id/{id}", handler(rues.CommuneIdHandler))
+	router.Handle("/commune/like/{request}", handler(rues.CommuneLikeHandler))	
+	
     router.Handle("/voies", handler(rues.VoiesHandler))
-	router.Handle("/voie/{voie}", handler(rues.VoieHandler))
+	router.Handle("/voie/name/{voie}", handler(rues.VoieNameHandler))
+	router.Handle("/voie/id/{id}", handler(rues.VoieIdHandler))
+	router.Handle("/voie/like/{request}", handler(rues.VoieLikeHandler))
 	
 	log.Printf("%s ", "Started ...");
     log.Fatal(http.ListenAndServe(addr, router))	
