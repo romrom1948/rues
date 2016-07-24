@@ -38,6 +38,8 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Methods", "GET")
     w.WriteHeader(http.StatusOK)
 	
 	h(w, r, db)
@@ -56,9 +58,9 @@ func main() {
 		os.Exit(-1)
 	}
 	
-	var port = ":8080" // default port
+	var addr = ":8080" // default binding address
 	if len(os.Args) == 3 {
-		port = ":" + os.Args[2]
+		addr = os.Args[2]
 	}
 	
     router := mux.NewRouter().StrictSlash(true)
@@ -67,6 +69,6 @@ func main() {
     router.Handle("/voies", handler(rues.VoiesHandler))
 	router.Handle("/voie/{voie}", handler(rues.VoieHandler))
 	
-	log.Printf("%s ", "Started");
-    log.Fatal(http.ListenAndServe(port, router))	
+	log.Printf("%s ", "Started ...");
+    log.Fatal(http.ListenAndServe(addr, router))	
 }

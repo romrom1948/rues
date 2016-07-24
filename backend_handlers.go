@@ -73,7 +73,13 @@ func CommuneHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	vars := mux.Vars(r)
 	commune := vars["commune"]
 
-	rows, err := db.Query("SELECT voies.id, voies.nom, voies.occurences FROM communes INNER JOIN liens ON liens.id_commune=communes.id INNER JOIN voies ON liens.id_voie=voies.id WHERE communes.nom=?", commune)
+	rows, err := db.Query(`
+						  SELECT voies.id, voies.nom, voies.occurences 
+							FROM communes
+							INNER JOIN liens ON liens.id_commune=communes.id
+							INNER JOIN voies ON liens.id_voie=voies.id
+						    WHERE communes.nom=?
+						  `, commune)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -103,7 +109,13 @@ func VoieHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	vars := mux.Vars(r)
 	voie := vars["voie"]	
 
-	rows, err := db.Query("SELECT communes.id, communes.nom, communes.cp, communes.voies FROM voies INNER JOIN liens ON liens.id_voie=voies.id INNER JOIN communes ON liens.id_commune=communes.id WHERE voies.nom=?", voie)
+	rows, err := db.Query(`
+						  SELECT communes.id, communes.nom, communes.cp, communes.voies 
+							FROM voies 
+							INNER JOIN liens ON liens.id_voie=voies.id 
+							INNER JOIN communes ON liens.id_commune=communes.id 
+							WHERE voies.nom=?
+						  `, voie)
 	if err != nil {
 		log.Fatal(err)
 	}
