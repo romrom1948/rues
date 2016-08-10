@@ -9,24 +9,24 @@ import (
 	"strings"
 	"fmt"
     "log"
+    "time"
     "net/http"
     
 	"github.com/gorilla/mux"
-	_ "github.com/mattn/go-sqlite3"	
 	
-	. "github.com/romrom1948/rues/util"	
+	"github.com/romrom1948/rues"
 )
 
 var helpMessage = []string{
-	"Usage: rues_backend <db> <addr>",
-	"Start a JSON backend server for rues db <db>.",
+	"Usage: rues_frontend <backend_addr> <addr>",
+	"Start a JSON frontend server for a backend reachable at <backend_addr.",
 	"<addr> is optional. The server will bind on it if supplied.",
 }
 
 func main() {
 	if len(os.Args) == 1 {
 		fmt.Println(strings.Join(helpMessage, "\n"))
-		fmt.Println("need an sqlite3 database path !")
+		fmt.Println("need a backend adress !")
 		os.Exit(-1)
 	}
 	
@@ -38,15 +38,15 @@ func main() {
     router := mux.NewRouter().StrictSlash(true)
 	// routes are set below, not enough of them to warrant a specific file
     
-	router.Handle("/communes", DBHandler(CommunesHandler))
-	router.Handle("/commune/name/{commune}", DBHandler(CommuneNameHandler))
-	router.Handle("/commune/id/{id}", DBHandler(CommuneIdHandler))
-	router.Handle("/commune/like/{request}", DBHandler(CommuneLikeHandler))
+	router.Handle("/communes", handler(rues.CommunesHandler))
+	router.Handle("/commune/name/{commune}", handler(rues.CommuneNameHandler))
+	router.Handle("/commune/id/{id}", handler(rues.CommuneIdHandler))
+	router.Handle("/commune/like/{request}", handler(rues.CommuneLikeHandler))	
 	
-    router.Handle("/voies", DBHandler(VoiesHandler))
-	router.Handle("/voie/name/{voie}", DBHandler(VoieNameHandler))
-	router.Handle("/voie/id/{id}", DBHandler(VoieIdHandler))
-	router.Handle("/voie/like/{request}", DBHandler(VoieLikeHandler))
+    router.Handle("/voies", handler(rues.VoiesHandler))
+	router.Handle("/voie/name/{voie}", handler(rues.VoieNameHandler))
+	router.Handle("/voie/id/{id}", handler(rues.VoieIdHandler))
+	router.Handle("/voie/like/{request}", handler(rues.VoieLikeHandler))
 	
 	log.Printf("%s ", "Started ...");
     log.Fatal(http.ListenAndServe(addr, router))	

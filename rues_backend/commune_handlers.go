@@ -2,11 +2,9 @@
 // Use of this source code is governed by the GPLv3
 // license that can be found in the LICENSE file.
 
-package rues
+package main
 
 import (
-	"fmt"
-    "log"
     "net/http"
 	"database/sql"
 	"encoding/json"
@@ -17,10 +15,12 @@ import (
 	"github.com/romrom1948/rues/util"	
 )
 
-func CommunesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CommunesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
+	util.JsonHeader(w)	
+
 	rows, err := db.Query(`SELECT id, nom, cp, voies FROM communes`)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
@@ -28,23 +28,25 @@ func CommunesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	for rows.Next() {
 		var commune util.Commune
 
-		err = rows.Scan(&commune.Id, &commune.Nom, 
-						&commune.Cp, &commune.Voies)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&commune.Id, &commune.Nom, 
+					 &commune.Cp, &commune.Voies) != nil {
+			return err
+		}
 		communes = append(communes, commune)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(communes)	
+    w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(communes)
+	
+	return nil
 }
 
-func CommuneNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CommuneNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
+	util.JsonHeader(w)	
+	
 	vars := mux.Vars(r)
 	commune := vars["commune"]
 
@@ -56,7 +58,7 @@ func CommuneNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 						    WHERE communes.nom=?
 						  `, commune)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
@@ -64,22 +66,24 @@ func CommuneNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	for rows.Next() {
 		var voie util.Voie
 
-		err = rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences) != nil {
+			return err
+		}
 		voies = append(voies, voie)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(voies)		 
+    w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(voies)
+	
+	return nil	 
 }
 
-func CommuneIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CommuneIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
+	util.JsonHeader(w)	
+	
 	vars := mux.Vars(r)
 	commune := vars["id"]
 
@@ -91,38 +95,39 @@ func CommuneIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 						    WHERE communes.id=?
 						  `, commune)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
 	var voies util.Voies
 	for rows.Next() {
 		var voie util.Voie
-
-		err = rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		
+		if rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences) != nil {
+			return err
+		}
 		voies = append(voies, voie)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(voies)		 
+    w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(voies)
+	
+	return nil		 
 }
 
-func CommuneLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CommuneLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){	
 	vars := mux.Vars(r)
 	request := vars["request"]
 	
-	// we use Sprintf to properly escape LIKE pattern
-	query := fmt.Sprintf(`SELECT id, nom, cp, voies FROM communes WHERE nom LIKE '%%%s%%'`, request)
-	rows, err := db.Query(query)
+	util.JsonHeader(w)	
+	
+	rows, err := db.Query(`SELECT id, nom, cp, voies FROM communes WHERE nom LIKE ?`, 
+						  string('%') + request + string('%')) // ugly
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
@@ -130,18 +135,18 @@ func CommuneLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	for rows.Next() {
 		var commune util.Commune
 
-		err = rows.Scan(&commune.Id, &commune.Nom, 
-						&commune.Cp, &commune.Voies)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&commune.Id, &commune.Nom, 
+					 &commune.Cp, &commune.Voies) != nil {
+			return err
+		}
 		communes = append(communes, commune)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(communes)		 
+    w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(communes)
+	
+	return nil		 
 }

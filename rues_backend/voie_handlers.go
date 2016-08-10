@@ -2,11 +2,9 @@
 // Use of this source code is governed by the GPLv3
 // license that can be found in the LICENSE file.
 
-package rues
+package main
 
 import (
-	"fmt"
-    "log"
     "net/http"
 	"database/sql"
 	"encoding/json"
@@ -17,35 +15,38 @@ import (
 	"github.com/romrom1948/rues/util"	
 )
 
-func VoiesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func VoiesHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
+	util.JsonHeader(w)	
+
 	rows, err := db.Query(`SELECT id, nom, occurences FROM voies`)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
 	var voies util.Voies
 	for rows.Next() {
 		var voie util.Voie
-
-		err = rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences) != nil {
+			return err
+		}
 		voies = append(voies, voie)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(voies)	
+    w.WriteHeader(http.StatusOK)	
+	json.NewEncoder(w).Encode(voies)
+	
+	return nil
 }
 
-func VoieNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func VoieNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
 	vars := mux.Vars(r)
-	voie := vars["voie"]	
+	voie := vars["voie"]
+		
+	util.JsonHeader(w)	
 
 	rows, err := db.Query(`
 						  SELECT communes.id, communes.nom, communes.cp, communes.voies 
@@ -55,33 +56,34 @@ func VoieNameHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 							WHERE voies.nom=?
 						  `, voie)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
 	var communes util.Communes
 	for rows.Next() {
 		var commune util.Commune
-
-		err = rows.Scan(&commune.Id, &commune.Nom, 
-						&commune.Cp, &commune.Voies)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&commune.Id, &commune.Nom, 
+					 &commune.Cp, &commune.Voies) != nil {
+			return err
+		}
 		communes = append(communes, commune)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(communes)		
+    w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(communes)
+	
+	return nil	
 }
 
-func VoieIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func VoieIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
 	vars := mux.Vars(r)
-	voie := vars["id"]	
+	voie := vars["id"]
+	
+	util.JsonHeader(w)	
 
 	rows, err := db.Query(`
 						  SELECT communes.id, communes.nom, communes.cp, communes.voies 
@@ -91,7 +93,7 @@ func VoieIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 							WHERE voies.id=?
 						  `, voie)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
@@ -99,49 +101,49 @@ func VoieIdHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	for rows.Next() {
 		var commune util.Commune
 
-		err = rows.Scan(&commune.Id, &commune.Nom, 
-						&commune.Cp, &commune.Voies)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&commune.Id, &commune.Nom, 
+					 &commune.Cp, &commune.Voies) != nil {
+			return err
+		}
 		communes = append(communes, commune)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(communes)		
+    w.WriteHeader(http.StatusOK)	
+	json.NewEncoder(w).Encode(communes)
+	
+	return nil
 }
 
-func VoieLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func VoieLikeHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) (error){
 	vars := mux.Vars(r)
 	request := vars["request"]
+	
+	util.JsonHeader(w)		
 
-	// we use Sprintf to properly escape LIKE pattern
-	query := fmt.Sprintf(`SELECT id, nom, occurences FROM voies WHERE nom LIKE '%%%s%%'`, request)
-	rows, err := db.Query(query)
+	rows, err := db.Query(`SELECT id, nom, occurences FROM voies WHERE nom LIKE ?`, 
+						  string('%') + request + string('%')) // ugly
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer rows.Close()
 
 	var voies util.Voies
 	for rows.Next() {
 		var voie util.Voie
-
-		err = rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences)
-		if err != nil {
-			log.Fatal(err)
-		} 
-	
+		if rows.Scan(&voie.Id, &voie.Nom, &voie.Occurences) != nil {
+			return err
+		}
 		voies = append(voies, voie)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	if rows.Err() != nil {
+		return err
 	}
 
-	json.NewEncoder(w).Encode(voies)		 
+    w.WriteHeader(http.StatusOK)	
+	json.NewEncoder(w).Encode(voies)	
+	
+	return nil
 }
