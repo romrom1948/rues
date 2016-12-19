@@ -13,7 +13,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type FrontEnv struct {
+type BackEnv struct {
 	db *sql.DB
 }
 
