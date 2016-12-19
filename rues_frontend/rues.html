@@ -1,0 +1,131 @@
+<!doctype html><html lang="fr-FR">
+
+    <head>
+	<title>rues</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+ 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<style>
+	 #header {
+	     display: flex;
+	     flex-direction: row;
+	     flex-wrap: wrap;
+	     justify-content: center;
+	 }
+
+	 #search {
+	     display: flex;
+	     flex-direction: row;
+	     justify-content: center;
+	 }
+
+	 #result {
+	     display: flex;
+	     flex-direction: row;
+	     flex-wrap: wrap;
+	     justify-content: center;
+	 }
+
+	 #rlist {
+	     display: flex;
+	     flex-direction: row;
+	     flex-wrap: wrap;
+	     justify-content: center;
+	 }
+
+	 #rlist li {
+	     list-style-type: none;
+	     text-align: center;
+	     flex-grow: 1;
+	     flex-basis: 50%;
+	 }
+	 #message {
+	     position: absolute;
+	     top: 15em;
+	     left: 50%;
+	     transform: translateX(-50%);
+	 }
+	</style>
+    </head>
+
+    <body>
+	<div id="header">
+	    <h1>rues</h1>
+	</div>
+
+	<div id="search">
+	    <form>
+		<input id="request" type="text" name="request">
+		<button id="mode" name="mode" type="button">changer</button>
+	    </form>
+	</div>
+
+	
+	<div id="result">
+	    <span id="message">Chargement ...</span>
+	    <ul id="rlist"></ul>
+	</div>
+
+	<script>
+	 var mode = "commune";
+	 var input_timeout = 0;
+
+	 $(document).ready(function () {
+	     $('#message').hide();
+	     $('#request').on('input', $.inputHandler);
+	     $('#mode').click($.switchMode);
+
+	     $('#mode').text(mode);
+	 });
+
+	 $.inputHandler = function() {
+	     var input = $('#request').val();
+	     if (input.length < 3) return;
+
+	     clearTimeout(input_timeout);
+	     input_timeout = setTimeout(function() {
+		 if (input === $('#request').val()) {
+		     $.showResult();
+		 }
+	     }, 500);
+	 }
+
+	 $.showResult = function() {
+	     if (! $('#message').is(':visible')) $('#message').fadeIn();
+	     $('#rlist').hide();
+
+	     var backend_url = "http://{{.Backend_URL}}" + "/" + mode + "/like/" + $('#request').val();
+
+	     $.getJSON(backend_url, function(data) {
+		 var items = [];
+
+		 if (data == null) {
+		     $('#message').hide();
+		     $('#rlist').html('<span>Aucun résultat ...</span>').fadeIn();
+		     return;
+		 }
+
+		 $.each(data, function(idx, elem) {
+		     items.push("<li class='elem' id='r" + elem.id + "'>" + elem.nom + "</li>");
+		 });
+
+		 items.push("<li class='elem'></li>")
+		 var block = items.join("");
+
+		 $('#message').hide();
+		 $('#rlist').html(block).fadeIn();
+	     }).fail (function(jqXHR, textStatus, error) {
+		 console.log("status: " + textStatus + "error: " + error);
+	     });
+	 };
+
+	 $.switchMode = function() {
+	     if (mode == "commune") mode = "voie";
+	     else if (mode == "voie") mode = "commune";
+
+	     $('#mode').text(mode);
+	 };
+	</script>
+    </body>
+
+</html>

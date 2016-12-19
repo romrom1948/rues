@@ -1,2 +1,4 @@
 rues.geany
 main
+*.log
+*.swp
