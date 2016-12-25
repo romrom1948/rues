@@ -21,15 +21,15 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	// routes are set below, not enough of them to warrant a specific file
 
-	router.Handle("/communes", DBHandler{db, CommunesHandler})
-	router.Handle("/commune/name/{commune}", DBHandler{db, CommuneNameHandler})
-	router.Handle("/commune/id/{id}", DBHandler{db, CommuneIdHandler})
-	router.Handle("/commune/like/{request}", DBHandler{db, CommuneLikeHandler})
+	router.Handle("/communes", DBHandler(CommunesHandler))
+	router.Handle("/commune/name/{commune}", DBHandler(CommuneNameHandler))
+	router.Handle("/commune/id/{id}", DBHandler(CommuneIdHandler))
+	router.Handle("/commune/like/{request}", DBHandler(CommuneLikeHandler))
 
-	router.Handle("/voies", DBHandler{db, VoiesHandler})
-	router.Handle("/voie/name/{voie}", DBHandler{db, VoieNameHandler})
-	router.Handle("/voie/id/{id}", DBHandler{db, VoieIdHandler})
-	router.Handle("/voie/like/{request}", DBHandler{db, VoieLikeHandler})
+	router.Handle("/voies", DBHandler(VoiesHandler))
+	router.Handle("/voie/name/{voie}", DBHandler(VoieNameHandler))
+	router.Handle("/voie/id/{id}", DBHandler(VoieIdHandler))
+	router.Handle("/voie/like/{request}", DBHandler(VoieLikeHandler))
 
 	log.Printf("%s ", "Started ...")
 	log.Fatal(http.ListenAndServe(addr, router))

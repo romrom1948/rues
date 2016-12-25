@@ -13,18 +13,18 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type func(w http.ResponseWriter, r *http.Request, db *sql.DB) error
+type DBHandler func(w http.ResponseWriter, r *http.Request, db *sql.DB) error
 
 func (h DBHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var e = GetBackEnv()
+	var env = GetBackEnv()
 	start := time.Now()
-	e := h.handler(w, r, e.db)
-	if e != nil {
+	err := h(w, r, env.db)
+	if err != nil {
 		http.Error(w, `500 internal server error`, http.StatusInternalServerError)
 		log.Printf("%s\t%s\t%s",
 			r.Method,
 			r.RequestURI,
-			e,
+			err,
 		)
 		return
 	} else {
