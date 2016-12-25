@@ -7,7 +7,7 @@ package main
 import (
 	"html/template"
 	"sync"
-	"fmt"
+	"log"
 	"os"
 )
 
@@ -24,7 +24,7 @@ func GetFrontEnv() *FrontEnv {
 		tmpl, err := template.New("rues.html").ParseFiles(os.Getenv("RUES_TEMPLATE_ROOT"))
 
 		if err != nil {
-			fmt.Println("error parsing template !")
+			log.Printf("error parsing template file %s !", os.Getenv("RUES_TEMPLATE_ROOT"))
 			os.Exit(-1)
 		}
 		
